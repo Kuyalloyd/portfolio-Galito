@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaPaperPlane, FaPhone, FaMapMarkerAlt, FaEnvelope } from 'react-icons/fa';
+import emailjs from '@emailjs/browser';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +11,16 @@ const Contact = () => {
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [submittedEmail, setSubmittedEmail] = useState('');
+
+  // Initialize EmailJS (replace with your public key)
+  // Get this from: https://dashboard.emailjs.com/
+  const EMAILJS_PUBLIC_KEY = 'xmVDz6LpgikOHGZBl';
+  const EMAILJS_SERVICE_ID = 'service_13e7m4t';
+  const EMAILJS_TEMPLATE_ID_ADMIN = 'template_3zh0gh8'; // Admin template (what you receive)
+  const EMAILJS_TEMPLATE_ID_USER = 'template_1hsp6sh'; // User template (confirmation email)
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -19,13 +30,53 @@ const Contact = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Here you would typically send the form data to a server
-    console.log('Form submitted:', formData);
-    setSubmitted(true);
-    setFormData({ name: '', email: '', message: '' });
-    setTimeout(() => setSubmitted(false), 3000);
+    setLoading(true);
+    setError('');
+
+    try {
+      // Initialize EmailJS
+      emailjs.init(EMAILJS_PUBLIC_KEY);
+
+      // Email 1: Send to your personal email (admin template)
+      const adminEmailParams = {
+        to_email: 'john.lloyd@urios.edu.ph',
+        from_name: formData.name,
+        from_email: formData.email,
+        message: formData.message,
+      };
+
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID_ADMIN,
+        adminEmailParams
+      );
+
+      // Email 2: Send confirmation to the user (user template)
+      const userEmailParams = {
+        to_email: formData.email,
+        from_name: formData.name,
+        message: formData.message,
+      };
+
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID_USER,
+        userEmailParams
+      );
+
+      console.log('Emails sent successfully!');
+      setSubmitted(true);
+      setSubmittedEmail(formData.email);
+      setFormData({ name: '', email: '', message: '' });
+      setTimeout(() => setSubmitted(false), 3000);
+    } catch (err) {
+      console.error('Error sending email:', err);
+      setError('Failed to send message. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const contactInfo = [
@@ -183,9 +234,18 @@ const Contact = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               type="submit"
-              className="w-full px-8 py-3 bg-gradient-to-r from-primary to-secondary text-white font-bold rounded-lg hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 flex items-center justify-center gap-2"
+              disabled={loading}
+              className="w-full px-8 py-3 bg-gradient-to-r from-primary to-secondary text-white font-bold rounded-lg hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <FaPaperPlane /> Send Message
+              {loading ? (
+                <>
+                  <span className="animate-spin">⏳</span> Sending...
+                </>
+              ) : (
+                <>
+                  <FaPaperPlane /> Send Message
+                </>
+              )}
             </motion.button>
 
             {/* Success Message */}
@@ -196,7 +256,20 @@ const Contact = () => {
                 exit={{ opacity: 0, scale: 0.8 }}
                 className="p-4 bg-green-500/20 border border-green-500 rounded-lg text-green-400 text-center"
               >
-                ✓ Message sent successfully!
+                <div>✓ Message sent successfully!</div>
+                <div className="text-sm mt-2">Confirmation sent to: <span className="font-semibold">{submittedEmail}</span></div>
+              </motion.div>
+            )}
+
+            {/* Error Message */}
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                className="p-4 bg-red-500/20 border border-red-500 rounded-lg text-red-400 text-center"
+              >
+                ✗ {error}
               </motion.div>
             )}
           </motion.form>
