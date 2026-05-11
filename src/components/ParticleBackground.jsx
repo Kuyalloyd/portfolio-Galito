@@ -10,6 +10,8 @@ const networkStyles = `
     --mouse-y: 50%;
     --mouse-x-px: 0px;
     --mouse-y-px: 0px;
+    --cursor-x-px: 0px;
+    --cursor-y-px: 0px;
     --shift-x-sm: 0px;
     --shift-y-sm: 0px;
     --shift-x-md: 0px;
@@ -91,13 +93,13 @@ const networkStyles = `
   }
 
   @keyframes techCursorPulse {
-    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.35; }
-    50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.7; }
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.18; }
+    50% { transform: translate(-50%, -50%) scale(1.05); opacity: 0.4; }
   }
 
   @keyframes techCursorCore {
-    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.65; }
-    50% { transform: translate(-50%, -50%) scale(1.24); opacity: 1; }
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.72; }
+    50% { transform: translate(-50%, -50%) scale(1.14); opacity: 1; }
   }
 
   @keyframes techTraceShift {
@@ -190,7 +192,7 @@ const networkStyles = `
   }
 
   .tech-cursor-track {
-    transform: translate3d(var(--mouse-x-px), var(--mouse-y-px), 0);
+    transform: translate3d(var(--cursor-x-px), var(--cursor-y-px), 0);
     will-change: transform;
   }
 
@@ -221,8 +223,8 @@ const ParticleBackground = () => {
         return;
       }
 
-      current.x += (target.x - current.x) * 0.22;
-      current.y += (target.y - current.y) * 0.22;
+      current.x += (target.x - current.x) * 0.28;
+      current.y += (target.y - current.y) * 0.28;
 
       if (Math.abs(target.x - current.x) < 0.35) {
         current.x = target.x;
@@ -243,12 +245,14 @@ const ParticleBackground = () => {
       root.style.setProperty('--mouse-y', `${mouseY}%`);
       root.style.setProperty('--mouse-x-px', `${current.x}px`);
       root.style.setProperty('--mouse-y-px', `${current.y}px`);
-      root.style.setProperty('--shift-x-sm', `${shiftX * 0.12}px`);
-      root.style.setProperty('--shift-y-sm', `${shiftY * 0.12}px`);
-      root.style.setProperty('--shift-x-md', `${shiftX * 0.24}px`);
-      root.style.setProperty('--shift-y-md', `${shiftY * 0.24}px`);
-      root.style.setProperty('--shift-x-lg', `${shiftX * 0.36}px`);
-      root.style.setProperty('--shift-y-lg', `${shiftY * 0.36}px`);
+      root.style.setProperty('--cursor-x-px', `${target.x}px`);
+      root.style.setProperty('--cursor-y-px', `${target.y}px`);
+      root.style.setProperty('--shift-x-sm', `${shiftX * 0.08}px`);
+      root.style.setProperty('--shift-y-sm', `${shiftY * 0.08}px`);
+      root.style.setProperty('--shift-x-md', `${shiftX * 0.16}px`);
+      root.style.setProperty('--shift-y-md', `${shiftY * 0.16}px`);
+      root.style.setProperty('--shift-x-lg', `${shiftX * 0.24}px`);
+      root.style.setProperty('--shift-y-lg', `${shiftY * 0.24}px`);
 
       frameId = window.requestAnimationFrame(updateVars);
     };
@@ -256,6 +260,12 @@ const ParticleBackground = () => {
     const handlePointerMove = (event) => {
       target.x = event.clientX;
       target.y = event.clientY;
+
+      const root = rootRef.current;
+      if (root) {
+        root.style.setProperty('--cursor-x-px', `${event.clientX}px`);
+        root.style.setProperty('--cursor-y-px', `${event.clientY}px`);
+      }
     };
 
     const handleTouchMove = (event) => {
@@ -265,11 +275,23 @@ const ParticleBackground = () => {
 
       target.x = event.touches[0].clientX;
       target.y = event.touches[0].clientY;
+
+      const root = rootRef.current;
+      if (root) {
+        root.style.setProperty('--cursor-x-px', `${event.touches[0].clientX}px`);
+        root.style.setProperty('--cursor-y-px', `${event.touches[0].clientY}px`);
+      }
     };
 
     const handleMouseLeave = () => {
       target.x = window.innerWidth / 2;
       target.y = window.innerHeight / 2;
+
+      const root = rootRef.current;
+      if (root) {
+        root.style.setProperty('--cursor-x-px', `${target.x}px`);
+        root.style.setProperty('--cursor-y-px', `${target.y}px`);
+      }
     };
 
     frameId = window.requestAnimationFrame(updateVars);
@@ -346,10 +368,10 @@ const ParticleBackground = () => {
       />
 
       <div className="tech-cursor-track absolute left-0 top-0 z-[2] h-0 w-0">
-        <div className="tech-cursor-ring absolute left-0 top-0 h-32 w-32 -translate-x-1/2 -translate-y-1/2 rounded-full border border-orange-300/18 bg-orange-300/4 blur-[0.5px]" />
-        <div className="tech-cursor-ring absolute left-0 top-0 h-14 w-14 -translate-x-1/2 -translate-y-1/2 rounded-full border border-sky-300/16" style={{ animationDelay: '1.6s' }} />
-        <div className="tech-cursor-core absolute left-0 top-0 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-orange-200 shadow-[0_0_14px_rgba(255,191,128,0.82)]" />
-        <div className="tech-cursor-core absolute left-0 top-0 h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full border border-orange-200/14" style={{ animationDelay: '0.8s' }} />
+        <div className="tech-cursor-ring absolute left-0 top-0 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full border border-orange-300/14" />
+        <div className="tech-cursor-ring absolute left-0 top-0 h-9 w-9 -translate-x-1/2 -translate-y-1/2 rounded-full border border-sky-300/14" style={{ animationDelay: '1.6s' }} />
+        <div className="tech-cursor-core absolute left-0 top-0 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-orange-200 shadow-[0_0_10px_rgba(255,191,128,0.72)]" />
+        <div className="tech-cursor-core absolute left-0 top-0 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-orange-200/12" style={{ animationDelay: '0.8s' }} />
       </div>
 
       <div className="tech-parallax-md absolute inset-0">
