@@ -8,6 +8,8 @@ const networkStyles = `
   .tech-root {
     --mouse-x: 50%;
     --mouse-y: 50%;
+    --mouse-x-px: 0px;
+    --mouse-y-px: 0px;
     --shift-x-sm: 0px;
     --shift-y-sm: 0px;
     --shift-x-md: 0px;
@@ -180,15 +182,16 @@ const networkStyles = `
   }
 
   .tech-cursor-ring {
-    left: var(--mouse-x);
-    top: var(--mouse-y);
     animation: techCursorPulse 4.2s ease-in-out infinite;
   }
 
   .tech-cursor-core {
-    left: var(--mouse-x);
-    top: var(--mouse-y);
     animation: techCursorCore 2.8s ease-in-out infinite;
+  }
+
+  .tech-cursor-track {
+    transform: translate3d(var(--mouse-x-px), var(--mouse-y-px), 0);
+    will-change: transform;
   }
 
   .tech-circuit {
@@ -218,8 +221,16 @@ const ParticleBackground = () => {
         return;
       }
 
-      current.x += (target.x - current.x) * 0.12;
-      current.y += (target.y - current.y) * 0.12;
+      current.x += (target.x - current.x) * 0.22;
+      current.y += (target.y - current.y) * 0.22;
+
+      if (Math.abs(target.x - current.x) < 0.35) {
+        current.x = target.x;
+      }
+
+      if (Math.abs(target.y - current.y) < 0.35) {
+        current.y = target.y;
+      }
 
       const width = window.innerWidth || 1;
       const height = window.innerHeight || 1;
@@ -230,17 +241,19 @@ const ParticleBackground = () => {
 
       root.style.setProperty('--mouse-x', `${mouseX}%`);
       root.style.setProperty('--mouse-y', `${mouseY}%`);
-      root.style.setProperty('--shift-x-sm', `${shiftX * 0.18}px`);
-      root.style.setProperty('--shift-y-sm', `${shiftY * 0.18}px`);
-      root.style.setProperty('--shift-x-md', `${shiftX * 0.38}px`);
-      root.style.setProperty('--shift-y-md', `${shiftY * 0.38}px`);
-      root.style.setProperty('--shift-x-lg', `${shiftX * 0.62}px`);
-      root.style.setProperty('--shift-y-lg', `${shiftY * 0.62}px`);
+      root.style.setProperty('--mouse-x-px', `${current.x}px`);
+      root.style.setProperty('--mouse-y-px', `${current.y}px`);
+      root.style.setProperty('--shift-x-sm', `${shiftX * 0.12}px`);
+      root.style.setProperty('--shift-y-sm', `${shiftY * 0.12}px`);
+      root.style.setProperty('--shift-x-md', `${shiftX * 0.24}px`);
+      root.style.setProperty('--shift-y-md', `${shiftY * 0.24}px`);
+      root.style.setProperty('--shift-x-lg', `${shiftX * 0.36}px`);
+      root.style.setProperty('--shift-y-lg', `${shiftY * 0.36}px`);
 
       frameId = window.requestAnimationFrame(updateVars);
     };
 
-    const handleMouseMove = (event) => {
+    const handlePointerMove = (event) => {
       target.x = event.clientX;
       target.y = event.clientY;
     };
@@ -260,13 +273,13 @@ const ParticleBackground = () => {
     };
 
     frameId = window.requestAnimationFrame(updateVars);
-    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    window.addEventListener('pointermove', handlePointerMove, { passive: true });
     window.addEventListener('touchmove', handleTouchMove, { passive: true });
     window.addEventListener('mouseleave', handleMouseLeave);
 
     return () => {
       window.cancelAnimationFrame(frameId);
-      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('pointermove', handlePointerMove);
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('mouseleave', handleMouseLeave);
     };
@@ -332,10 +345,12 @@ const ParticleBackground = () => {
         }}
       />
 
-      <div className="tech-cursor-ring tech-parallax-lg absolute h-56 w-56 rounded-full border border-orange-300/25 bg-orange-300/5 blur-[1px]" />
-      <div className="tech-cursor-ring tech-parallax-md absolute h-28 w-28 rounded-full border border-sky-300/20" style={{ animationDelay: '1.6s' }} />
-      <div className="tech-cursor-core tech-parallax-lg absolute h-3 w-3 rounded-full bg-orange-200 shadow-[0_0_20px_rgba(255,191,128,0.95)]" />
-      <div className="tech-cursor-core tech-parallax-md absolute h-14 w-14 rounded-full border border-orange-200/18" style={{ animationDelay: '0.8s' }} />
+      <div className="tech-cursor-track absolute left-0 top-0 z-[2] h-0 w-0">
+        <div className="tech-cursor-ring absolute left-0 top-0 h-32 w-32 -translate-x-1/2 -translate-y-1/2 rounded-full border border-orange-300/18 bg-orange-300/4 blur-[0.5px]" />
+        <div className="tech-cursor-ring absolute left-0 top-0 h-14 w-14 -translate-x-1/2 -translate-y-1/2 rounded-full border border-sky-300/16" style={{ animationDelay: '1.6s' }} />
+        <div className="tech-cursor-core absolute left-0 top-0 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-orange-200 shadow-[0_0_14px_rgba(255,191,128,0.82)]" />
+        <div className="tech-cursor-core absolute left-0 top-0 h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full border border-orange-200/14" style={{ animationDelay: '0.8s' }} />
+      </div>
 
       <div className="tech-parallax-md absolute inset-0">
         <div className="tech-beam-a absolute left-[14%] top-[-12%] h-[124%] w-px bg-gradient-to-b from-transparent via-orange-400/30 to-transparent blur-[1px]" />
