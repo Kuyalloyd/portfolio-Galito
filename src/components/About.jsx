@@ -1,133 +1,114 @@
 import { motion } from 'framer-motion';
-import { useTheme } from '../context/ThemeContext';
+import { FaCalendarAlt, FaMapMarkerAlt, FaCode, FaLaptop } from 'react-icons/fa';
+import { projectCount } from '../data/projects';
 
 const About = () => {
-  const { isDark } = useTheme();
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  };
+  const stats = [
+    { label: 'Years Experience', value: '2+' },
+    { label: 'Projects Completed', value: String(projectCount) },
+    { label: 'Dedicated', value: '100%' },
+  ];
 
-  const itemVariants = {
-    hidden: { opacity: 0, x: -50 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: { duration: 0.8 },
-    },
-  };
-
-  const imageVariants = {
-    hidden: { opacity: 0, x: 50 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: { duration: 0.8 },
-    },
+  const education = {
+    degree: 'BS Information Technology',
+    school: 'Father Saturnino Urios University',
+    location: 'Butuan City, Agusan del Norte, Philippines',
   };
 
   return (
-    <section id="about" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-100 via-gray-50 to-gray-100 dark:from-gray-900 dark:via-slate-900 dark:to-gray-900 transition-colors duration-300">
-      <div className="max-w-6xl mx-auto">
+    <section id="about" className="relative bg-transparent px-4 py-20 transition-colors duration-300 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-6xl">
         <motion.h2
           initial={{ opacity: 0, y: -50 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="text-4xl sm:text-5xl font-bold mb-12 text-center text-gray-900 dark:text-white"
+          className="mb-12 text-center text-4xl font-bold text-white sm:text-5xl"
         >
-          About <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Me</span>
+          About Me
         </motion.h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          {/* Left Content */}
+        <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
           <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
             viewport={{ once: true }}
             className="space-y-6"
           >
-            <motion.p
-              variants={itemVariants}
-              className="text-gray-700 dark:text-gray-300 text-lg leading-relaxed"
-            >
-              I'm a skilled Full Stack Developer with 5+ years of experience building enterprise-level web applications. I specialize in React, Node.js, and cloud technologies, with a proven track record of delivering high-quality solutions that drive business value and user engagement.
-            </motion.p>
+            <p className="text-lg leading-relaxed text-gray-300">
+              Hello! I&apos;m John Lloyd, a passionate full-stack developer who
+              enjoys building digital experiences that feel clean, useful, and
+              modern.
+            </p>
+            <p className="text-lg leading-relaxed text-gray-300">
+              With a strong foundation in both front-end and back-end
+              development, I like turning ideas into working products while
+              learning more with every project I ship.
+            </p>
 
-            <motion.p
-              variants={itemVariants}
-              className="text-gray-700 dark:text-gray-300 text-lg leading-relaxed"
-            >
-              I'm committed to continuous learning and staying current with industry trends. I'm passionate about writing clean, maintainable code and mentoring junior developers while contributing to the tech community through open-source projects.
-            </motion.p>
-
-            <motion.div variants={itemVariants} className="space-y-4">
-              <h3 className="text-2xl font-bold text-primary dark:text-secondary">Experience</h3>
-              <div className="space-y-3">
-                {[
-                  { role: 'Senior Full Stack Developer', company: 'Tech Solutions Inc.', duration: '2021 - Present' },
-                  { role: 'Full Stack Developer', company: 'Digital Innovations Ltd.', duration: '2019 - 2021' },
-                  { role: 'Frontend Developer', company: 'WebCraft Agency', duration: '2017 - 2019' },
-                ].map((job, index) => (
-                  <motion.div
-                    key={index}
-                    whileHover={{ x: 10 }}
-                    className="p-4 border-l-2 border-primary bg-gray-200/30 dark:bg-slate-800/60 rounded-lg transition-colors duration-300"
-                  >
-                    <p className="font-semibold text-gray-900 dark:text-white">{job.role}</p>
-                    <p className="text-gray-600 dark:text-gray-400 text-sm">{job.company}</p>
-                    <p className="text-gray-500 dark:text-gray-500 text-xs">{job.duration}</p>
-                  </motion.div>
-                ))}
+            <div className="mt-8 space-y-4 rounded-lg border border-slate-600 bg-slate-700/50 p-6">
+              <div className="flex items-start gap-3">
+                <FaCode className="mt-1 text-xl text-orange-400" />
+                <div>
+                  <p className="font-semibold text-white">{education.degree}</p>
+                  <p className="text-gray-400">{education.school}</p>
+                </div>
               </div>
-            </motion.div>
+              <div className="flex items-start gap-3">
+                <FaMapMarkerAlt className="mt-1 text-xl text-orange-400" />
+                <div>
+                  <p className="text-gray-300">{education.location}</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <FaCalendarAlt className="mt-1 text-xl text-orange-400" />
+                <div>
+                  <p className="text-gray-300">Born: January 13, 2005</p>
+                </div>
+              </div>
+            </div>
           </motion.div>
 
-          {/* Right Image */}
           <motion.div
-            variants={imageVariants}
-            initial="hidden"
-            whileInView="visible"
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="relative"
+            className="grid grid-cols-1 gap-6"
           >
-            <motion.div
-              animate={{ y: [0, 20, 0] }}
-              transition={{ duration: 4, repeat: Infinity }}
-              className="relative w-full h-96 bg-gradient-to-br from-primary/20 to-secondary/20 dark:from-primary/10 dark:to-secondary/10 rounded-2xl overflow-hidden border-2 border-primary/30"
-            >
-              {/* Light Mode Image */}
-              <img 
-                src="/images/profile.jpg" 
-                alt="John Lloyd Gwapo"
-                className={`w-full h-full object-contain bg-gradient-to-br from-slate-800 to-slate-900 transition-all duration-500 ${isDark ? 'hidden' : 'block'}`}
-              />
-              
-              {/* Dark Mode Image */}
-              <img 
-                src="/images/profile2.jpg" 
-                alt="John Lloyd Gwapo - Dark Mode"
-                className={`w-full h-full object-contain bg-gradient-to-br from-slate-800 to-slate-900 transition-all duration-500 ${isDark ? 'block' : 'hidden'}`}
-              />
-            </motion.div>
+            {stats.map((stat, index) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ delay: index * 0.2 }}
+                viewport={{ once: true }}
+                className="rounded-lg border border-slate-500 bg-gradient-to-br from-slate-700 to-slate-600 p-8 text-center transition-all hover:border-orange-400"
+              >
+                <h3 className="mb-2 text-5xl font-bold text-orange-400">{stat.value}</h3>
+                <p className="font-semibold text-gray-300">{stat.label}</p>
+              </motion.div>
+            ))}
 
-            {/* Decorative Elements */}
             <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-              className="absolute -top-10 -right-10 w-40 h-40 border-2 border-primary/20 rounded-full"
-            />
-            <motion.div
-              animate={{ rotate: -360 }}
-              transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
-              className="absolute -bottom-10 -left-10 w-32 h-32 border-2 border-secondary/20 rounded-full"
-            />
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              viewport={{ once: true }}
+              className="col-span-1 rounded-lg border border-slate-600 bg-slate-700/50 p-6"
+            >
+              <h4 className="mb-4 flex items-center gap-2 font-semibold text-white">
+                <FaLaptop className="text-orange-400" /> Specializations
+              </h4>
+              <ul className="space-y-2 text-gray-300">
+                <li>- Frontend: React, JavaScript, HTML5, CSS3, Tailwind</li>
+                <li>- Backend: Node.js, Express, Laravel, PHP</li>
+                <li>- Databases: MySQL, PostgreSQL, Supabase</li>
+                <li>- Tools: Git, GitHub, Docker, VS Code</li>
+                <li>- Responsive and Accessible Design</li>
+              </ul>
+            </motion.div>
           </motion.div>
         </div>
       </div>

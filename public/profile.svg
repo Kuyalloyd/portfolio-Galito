@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e293b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f172a;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ea580c;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f97316;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="400" fill="url(#bgGradient)"/>
+  
+  <!-- Circle background -->
+  <circle cx="200" cy="200" r="180" fill="#1e293b" stroke="url(#accentGradient)" stroke-width="3"/>
+  
+  <!-- Head -->
+  <circle cx="200" cy="140" r="50" fill="url(#accentGradient)"/>
+  
+  <!-- Body -->
+  <path d="M 150 200 Q 150 240 160 280 L 240 280 Q 250 240 250 200 Z" fill="url(#accentGradient)"/>
+  
+  <!-- Arms -->
+  <rect x="80" y="190" width="70" height="30" rx="15" fill="url(#accentGradient)"/>
+  <rect x="250" y="190" width="70" height="30" rx="15" fill="url(#accentGradient)"/>
+  
+  <!-- Name text -->
+  <text x="200" y="330" font-size="20" font-weight="bold" text-anchor="middle" fill="#ea580c">John Lloyd</text>
+  <text x="200" y="355" font-size="14" text-anchor="middle" fill="#94a3b8">Developer</text>
+</svg>

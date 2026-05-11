@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  color-scheme: dark;
+  --portfolio-bg: #090403;
+  --portfolio-bg-deep: #040202;
+  --portfolio-accent: #f97316;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -12,42 +19,31 @@ html {
   scroll-behavior: smooth;
 }
 
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
 body {
-  background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
+  background:
+    radial-gradient(circle at top, rgba(249, 115, 22, 0.14), transparent 30%),
+    linear-gradient(180deg, #110605 0%, var(--portfolio-bg) 45%, var(--portfolio-bg-deep) 100%);
   color: #e2e8f0;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
-  padding: 0;
   min-width: 320px;
-  min-height: 100vh;
+  overflow-x: hidden;
 }
 
 a {
-  font-weight: 500;
-  color: #6366f1;
+  color: inherit;
   text-decoration: inherit;
-  transition: color 0.3s ease;
-}
-a:hover {
-  color: #ec4899;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+button,
+input,
+textarea,
+select {
+  font: inherit;
 }

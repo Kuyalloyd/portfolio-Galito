@@ -1,131 +1,112 @@
 import { motion } from 'framer-motion';
-import { FaGithub, FaLinkedin, FaTwitter, FaInstagram, FaArrowUp } from 'react-icons/fa';
+import { FaGithub, FaFacebook, FaEnvelope, FaArrowUp } from 'react-icons/fa';
 
 const Footer = () => {
-  const currentYear = new Date().getFullYear();
-
-  const socialLinks = [
-    { icon: FaGithub, href: '#', label: 'GitHub' },
-    { icon: FaLinkedin, href: '#', label: 'LinkedIn' },
-    { icon: FaTwitter, href: '#', label: 'Twitter' },
-    { icon: FaInstagram, href: '#', label: 'Instagram' },
-  ];
-
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const footerLinks = [
+    { name: 'Home', href: '#home' },
+    { name: 'About', href: '#about' },
+    { name: 'Skills', href: '#skills' },
+    { name: 'Projects', href: '#projects' },
+    { name: 'Contact', href: '#contact' },
+  ];
+
   return (
-    <motion.footer
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      transition={{ duration: 0.8 }}
-      viewport={{ once: true }}
-      className="bg-gradient-to-t from-gray-900 to-gray-800 dark:from-gray-950 dark:to-gray-900 border-t border-primary/20 py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-300"
-    >
-      <div className="max-w-6xl mx-auto">
-        {/* Main Content */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-          {/* Brand */}
+    <footer className="relative border-t border-white/10 bg-slate-950/50 px-4 py-12 backdrop-blur-sm sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-8 grid grid-cols-1 gap-8 md:grid-cols-3">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h3 className="mb-2 text-2xl font-bold text-white">John Lloyd</h3>
+            <p className="text-gray-400">Full Stack Developer | React and Laravel Specialist</p>
+          </motion.div>
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
             viewport={{ once: true }}
           >
-            <h3 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-2">
-              John Lloyd Gwapo
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400">
-              Full Stack Developer | Building scalable web solutions and driving innovation with modern technologies.
-            </p>
+            <h4 className="mb-4 font-semibold text-white">Quick Links</h4>
+            <div className="space-y-2">
+              {footerLinks.map((link) => (
+                <a
+                  key={link.name}
+                  href={link.href}
+                  className="text-gray-400 transition-colors hover:text-orange-400"
+                >
+                  {link.name}
+                </a>
+              ))}
+            </div>
           </motion.div>
 
-          {/* Quick Links */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
             viewport={{ once: true }}
           >
-            <h4 className="text-gray-900 dark:text-white font-bold mb-4">Quick Links</h4>
-            <ul className="space-y-2">
-              {['Home', 'About', 'Projects', 'Skills', 'Contact'].map((link) => (
-                <li key={link}>
-                  <a
-                    href={`#${link.toLowerCase()}`}
-                    className="text-gray-600 dark:text-gray-400 hover:text-primary transition-colors duration-300"
-                  >
-                    {link}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-
-          {/* Social Links */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            viewport={{ once: true }}
-          >
-            <h4 className="text-gray-900 dark:text-white font-bold mb-4">Follow Me</h4>
+            <h4 className="mb-4 font-semibold text-white">Follow Me</h4>
             <div className="flex gap-4">
-              {socialLinks.map((social, index) => {
-                const IconComponent = social.icon;
-                return (
-                  <motion.a
-                    key={index}
-                    href={social.href}
-                    whileHover={{ scale: 1.2, rotate: 10 }}
-                    whileTap={{ scale: 0.9 }}
-                    className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-300"
-                    title={social.label}
-                  >
-                    <IconComponent className="text-primary hover:text-white" />
-                  </motion.a>
-                );
-              })}
+              <motion.a
+                href="https://github.com/Kuyalloyd"
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.2 }}
+                className="text-xl text-gray-400 transition-colors hover:text-orange-400"
+              >
+                <FaGithub />
+              </motion.a>
+              <motion.a
+                href="https://www.facebook.com/johnlloyd.galito.33"
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.2 }}
+                className="text-xl text-gray-400 transition-colors hover:text-orange-400"
+              >
+                <FaFacebook />
+              </motion.a>
+              <motion.a
+                href="mailto:john.lloyd@urios.edu.ph"
+                whileHover={{ scale: 1.2 }}
+                className="text-xl text-gray-400 transition-colors hover:text-orange-400"
+              >
+                <FaEnvelope />
+              </motion.a>
             </div>
           </motion.div>
         </div>
 
-        {/* Divider */}
-        <motion.div
-          initial={{ scaleX: 0 }}
-          whileInView={{ scaleX: 1 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent my-8"
-        />
+        <div className="my-8 border-t border-slate-700" />
 
-        {/* Bottom Section */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-          {/* Copyright */}
+        <div className="flex flex-col items-center justify-between md:flex-row">
           <motion.p
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
             viewport={{ once: true }}
-            className="text-gray-400 text-sm text-center md:text-left"
+            className="text-center text-sm text-gray-400 md:text-left"
           >
-            © {currentYear} John Lloyd Gwapo. All rights reserved. | Designed & Built with React & Framer Motion
+            Copyright 2025 John Lloyd Galito. All rights reserved. | Built with React and Tailwind CSS
           </motion.p>
 
-          {/* Scroll to Top */}
           <motion.button
             onClick={scrollToTop}
-            whileHover={{ scale: 1.1, y: -5 }}
+            whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
-            className="w-12 h-12 rounded-full border-2 border-primary flex items-center justify-center hover:bg-primary/20 transition-all duration-300"
-            title="Scroll to top"
+            className="mt-4 flex h-10 w-10 items-center justify-center rounded-full border-2 border-orange-400 text-orange-400 transition-all hover:bg-orange-400/10 md:mt-0"
           >
-            <FaArrowUp className="text-primary text-lg" />
+            <FaArrowUp className="text-lg" />
           </motion.button>
         </div>
       </div>
-    </motion.footer>
+    </footer>
   );
 };
 
