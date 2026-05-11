@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaGithub } from 'react-icons/fa';
 import { projectCount } from '../data/projects';
@@ -130,39 +130,74 @@ const heroFxStyles = `
 `;
 
 const Hero = () => {
-  const [cardState, setCardState] = useState(defaultCardState);
   const [isHovering, setIsHovering] = useState(false);
+  const cardRef = useRef(null);
+  const frameRef = useRef(0);
+  const pendingCardStateRef = useRef(defaultCardState);
+
+  useEffect(() => {
+    return () => {
+      if (frameRef.current) {
+        window.cancelAnimationFrame(frameRef.current);
+      }
+    };
+  }, []);
+
+  const applyCardState = (nextState) => {
+    const card = cardRef.current;
+
+    if (!card) {
+      return;
+    }
+
+    card.style.setProperty('--glare-x', `${nextState.glareX}%`);
+    card.style.setProperty('--glare-y', `${nextState.glareY}%`);
+    card.style.transform = `perspective(1500px) rotateX(${nextState.rotateX}deg) rotateY(${nextState.rotateY}deg) scale(${nextState.scale})`;
+  };
+
+  const queueCardState = (nextState) => {
+    pendingCardStateRef.current = nextState;
+
+    if (frameRef.current) {
+      return;
+    }
+
+    frameRef.current = window.requestAnimationFrame(() => {
+      frameRef.current = 0;
+      applyCardState(pendingCardStateRef.current);
+    });
+  };
 
   const handlePointerMove = (event) => {
     const bounds = event.currentTarget.getBoundingClientRect();
     const percentX = (event.clientX - bounds.left) / bounds.width;
     const percentY = (event.clientY - bounds.top) / bounds.height;
 
-    setCardState({
+    queueCardState({
       rotateX: (0.5 - percentY) * 4,
       rotateY: (percentX - 0.5) * 5,
       glareX: percentX * 100,
       glareY: percentY * 100,
-      scale: 1.007,
+      scale: 1.004,
     });
   };
 
   const handlePointerEnter = () => {
     setIsHovering(true);
-    setCardState((current) => ({
-      ...current,
-      scale: 1.003,
-    }));
+    queueCardState({
+      ...pendingCardStateRef.current,
+      scale: 1.002,
+    });
   };
 
   const resetCard = () => {
     setIsHovering(false);
-    setCardState(defaultCardState);
+    queueCardState(defaultCardState);
   };
 
-  const focusShiftX = (cardState.glareX - 50) * 0.24;
-  const focusShiftY = (cardState.glareY - 50) * 0.18;
-  const dynamicShadow = `0 28px 88px rgba(0,0,0,${isHovering ? '0.48' : '0.42'}), ${cardState.rotateY * -0.36}px ${cardState.rotateX * 0.36}px 28px rgba(249,115,22,${isHovering ? '0.18' : '0.11'}), 0 0 0 1px rgba(255,255,255,0.03)`;
+  const dynamicShadow = isHovering
+    ? '0 28px 88px rgba(0,0,0,0.48), 0 0 28px rgba(249,115,22,0.18), 0 0 0 1px rgba(255,255,255,0.03)'
+    : '0 24px 74px rgba(0,0,0,0.42), 0 0 18px rgba(249,115,22,0.1), 0 0 0 1px rgba(255,255,255,0.03)';
 
   return (
     <section id="home" className="relative flex min-h-screen items-center justify-center bg-transparent px-4 pt-20 sm:px-6 lg:px-8">
@@ -239,35 +274,37 @@ const Hero = () => {
           >
             <div
               className="hero-halo-drift absolute h-72 w-72 rounded-full bg-orange-500/12 blur-3xl"
-              style={{ transform: `translate(${focusShiftX * 0.9}px, ${focusShiftY * 0.9}px)` }}
             />
             <div
               className="absolute h-[23rem] w-[23rem] rounded-full border border-orange-400/16 hero-orbit-a"
-              style={{ transform: `translate(${focusShiftX * 0.35}px, ${focusShiftY * 0.35}px)` }}
             />
             <div
               className="absolute h-[24.8rem] w-[24.8rem] rounded-full border border-dashed border-orange-300/16 hero-orbit-b"
-              style={{ transform: `translate(${focusShiftX * 0.2}px, ${focusShiftY * 0.2}px)` }}
             />
             <div
               className="absolute h-[17rem] w-[17rem] rounded-full border border-sky-400/14 hero-orbit-c"
-              style={{ transform: `translate(${focusShiftX * 0.5}px, ${focusShiftY * 0.5}px)` }}
             />
 
             <motion.div
+              ref={cardRef}
               onPointerEnter={handlePointerEnter}
               onPointerMove={handlePointerMove}
               onPointerLeave={resetCard}
               onBlur={resetCard}
               style={{
-                transform: `perspective(1500px) rotateX(${cardState.rotateX}deg) rotateY(${cardState.rotateY}deg) scale(${cardState.scale})`,
+                '--glare-x': '50%',
+                '--glare-y': '35%',
+                transform: 'perspective(1500px) rotateX(0deg) rotateY(0deg) scale(1)',
                 transformStyle: 'preserve-3d',
+                transition: isHovering
+                  ? 'box-shadow 180ms ease'
+                  : 'transform 220ms ease, box-shadow 220ms ease',
               }}
-              className="relative z-10 w-full max-w-[24rem] transition-transform duration-200 ease-out"
+              className="relative z-10 w-full max-w-[24rem] will-change-transform"
             >
               <div
                 className="relative overflow-hidden rounded-[2rem] border border-orange-400/30 bg-[linear-gradient(180deg,rgba(18,10,8,0.82),rgba(8,5,4,0.9))] p-3 backdrop-blur-md"
-                style={{ boxShadow: dynamicShadow, transformStyle: 'preserve-3d' }}
+                style={{ boxShadow: dynamicShadow, transformStyle: 'preserve-3d', transition: 'box-shadow 180ms ease' }}
               >
                 <div
                   className="hero-frame-spin pointer-events-none absolute inset-[-18%] rounded-full blur-3xl mix-blend-screen"
@@ -280,7 +317,7 @@ const Hero = () => {
                 <div
                   className="pointer-events-none absolute inset-0 mix-blend-screen"
                   style={{
-                    background: `radial-gradient(circle at ${cardState.glareX}% ${cardState.glareY}%, rgba(255,255,255,0.34), transparent 20%), linear-gradient(135deg, rgba(249,115,22,0.18), transparent 44%, rgba(56,189,248,0.1) 72%, transparent)`,
+                    background: 'radial-gradient(circle at var(--glare-x) var(--glare-y), rgba(255,255,255,0.34), transparent 20%), linear-gradient(135deg, rgba(249,115,22,0.18), transparent 44%, rgba(56,189,248,0.1) 72%, transparent)',
                     opacity: isHovering ? 0.92 : 0.68,
                   }}
                 />
@@ -290,7 +327,6 @@ const Hero = () => {
                     backgroundImage:
                       'linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)',
                     backgroundSize: '34px 34px',
-                    transform: `translate(${focusShiftX * 0.25}px, ${focusShiftY * 0.25}px)`,
                   }}
                 />
                 <div className="hero-shimmer pointer-events-none absolute inset-y-0 left-[-25%] w-24 bg-gradient-to-r from-transparent via-white/25 to-transparent" />
@@ -310,7 +346,7 @@ const Hero = () => {
                   <div
                     className="absolute inset-0 opacity-55 mix-blend-screen"
                     style={{
-                      background: `radial-gradient(circle at ${cardState.glareX}% ${cardState.glareY}%, rgba(255, 191, 128, 0.28), transparent 16%), radial-gradient(circle at ${cardState.glareX}% ${cardState.glareY}%, rgba(56,189,248,0.16), transparent 28%)`,
+                      background: 'radial-gradient(circle at var(--glare-x) var(--glare-y), rgba(255, 191, 128, 0.28), transparent 16%), radial-gradient(circle at var(--glare-x) var(--glare-y), rgba(56,189,248,0.16), transparent 28%)',
                     }}
                   />
                   <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-orange-300/18 to-transparent" />
@@ -332,8 +368,8 @@ const Hero = () => {
                   <div
                     className="hero-reticle pointer-events-none absolute z-20 h-16 w-16 rounded-full border border-orange-300/55 transition-opacity duration-200"
                     style={{
-                      left: `${cardState.glareX}%`,
-                      top: `${cardState.glareY}%`,
+                      left: 'var(--glare-x)',
+                      top: 'var(--glare-y)',
                       opacity: isHovering ? 1 : 0.42,
                     }}
                   >
@@ -345,7 +381,6 @@ const Hero = () => {
 
                   <div
                     className="pointer-events-none absolute right-5 top-5 rounded-xl border border-sky-300/15 bg-black/35 px-3 py-2 backdrop-blur-sm"
-                    style={{ transform: `translate(${focusShiftX * 0.55}px, ${focusShiftY * 0.45}px)` }}
                   >
                     <p className="text-[10px] uppercase tracking-[0.24em] text-slate-400">Availability</p>
                     <p className="mt-1 text-sm font-semibold text-white">Open to Work</p>
@@ -395,21 +430,7 @@ const Hero = () => {
                     </div>
                   </div>
 
-                  <div className="mt-4 flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-slate-400">
-                    <div className="grid grid-cols-3 gap-2">
-                      <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5">React</span>
-                      <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5">Laravel</span>
-                      <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5">API</span>
-                    </div>
-                    <span className="rounded-full border border-sky-300/15 bg-sky-400/5 px-3 py-1.5 text-slate-300">
-                      Butuan City, PH
-                    </span>
-                  </div>
-
-                  <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="text-sm text-slate-300">
-                      Building clean, modern web products with strong UI and backend structure.
-                    </div>
+                  <div className="mt-4 flex items-center justify-end">
                     <motion.a
                       href="#contact"
                       whileHover={{ scale: 1.05 }}
