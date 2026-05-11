@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FaBolt, FaCode, FaGithub, FaMicrochip, FaSignal } from 'react-icons/fa';
+import { FaGithub } from 'react-icons/fa';
 import { projectCount } from '../data/projects';
 
 const defaultCardState = {
@@ -27,16 +27,6 @@ const heroFxStyles = `
     12% { opacity: 0.18; }
     45% { opacity: 0.36; }
     100% { transform: translateY(135%); opacity: 0; }
-  }
-
-  @keyframes heroChipFloat {
-    0%, 100% { transform: translate3d(0, 0, 0); }
-    50% { transform: translate3d(0, -10px, 0); }
-  }
-
-  @keyframes heroChipFloatAlt {
-    0%, 100% { transform: translate3d(0, 0, 0); }
-    50% { transform: translate3d(0, 10px, 0); }
   }
 
   @keyframes heroCorePulse {
@@ -71,6 +61,21 @@ const heroFxStyles = `
     50% { opacity: 1; }
   }
 
+  @keyframes heroHaloDrift {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.42; }
+    50% { transform: translate3d(10px, -8px, 0) scale(1.08); opacity: 0.78; }
+  }
+
+  @keyframes heroFrameSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes heroReticleDrift {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    50% { transform: translate3d(4px, -4px, 0); }
+  }
+
   .hero-orbit-a {
     animation: heroOrbitClockwise 18s linear infinite;
   }
@@ -85,14 +90,6 @@ const heroFxStyles = `
 
   .hero-scan {
     animation: heroScan 6.4s linear infinite;
-  }
-
-  .hero-chip {
-    animation: heroChipFloat 4.6s ease-in-out infinite;
-  }
-
-  .hero-chip-alt {
-    animation: heroChipFloatAlt 5.2s ease-in-out infinite;
   }
 
   .hero-core-pulse {
@@ -118,10 +115,23 @@ const heroFxStyles = `
   .hero-data-blink {
     animation: heroDataBlink 2.6s ease-in-out infinite;
   }
+
+  .hero-halo-drift {
+    animation: heroHaloDrift 7s ease-in-out infinite;
+  }
+
+  .hero-frame-spin {
+    animation: heroFrameSpin 16s linear infinite;
+  }
+
+  .hero-reticle-drift {
+    animation: heroReticleDrift 4.6s ease-in-out infinite;
+  }
 `;
 
 const Hero = () => {
   const [cardState, setCardState] = useState(defaultCardState);
+  const [isHovering, setIsHovering] = useState(false);
 
   const handlePointerMove = (event) => {
     const bounds = event.currentTarget.getBoundingClientRect();
@@ -129,19 +139,30 @@ const Hero = () => {
     const percentY = (event.clientY - bounds.top) / bounds.height;
 
     setCardState({
-      rotateX: (0.5 - percentY) * 18,
-      rotateY: (percentX - 0.5) * 20,
+      rotateX: (0.5 - percentY) * 4,
+      rotateY: (percentX - 0.5) * 5,
       glareX: percentX * 100,
       glareY: percentY * 100,
-      scale: 1.045,
+      scale: 1.007,
     });
   };
 
-  const resetCard = () => setCardState(defaultCardState);
+  const handlePointerEnter = () => {
+    setIsHovering(true);
+    setCardState((current) => ({
+      ...current,
+      scale: 1.003,
+    }));
+  };
 
-  const focusShiftX = (cardState.glareX - 50) * 0.55;
-  const focusShiftY = (cardState.glareY - 50) * 0.42;
-  const dynamicShadow = `0 42px 130px rgba(0,0,0,0.48), ${cardState.rotateY * -0.85}px ${cardState.rotateX * 0.85}px 70px rgba(249,115,22,0.24), ${cardState.rotateY * 0.45}px ${cardState.rotateX * -0.45}px 54px rgba(56,189,248,0.12), 0 0 0 1px rgba(255,255,255,0.03)`;
+  const resetCard = () => {
+    setIsHovering(false);
+    setCardState(defaultCardState);
+  };
+
+  const focusShiftX = (cardState.glareX - 50) * 0.24;
+  const focusShiftY = (cardState.glareY - 50) * 0.18;
+  const dynamicShadow = `0 28px 88px rgba(0,0,0,${isHovering ? '0.48' : '0.42'}), ${cardState.rotateY * -0.36}px ${cardState.rotateX * 0.36}px 28px rgba(249,115,22,${isHovering ? '0.18' : '0.11'}), 0 0 0 1px rgba(255,255,255,0.03)`;
 
   return (
     <section id="home" className="relative flex min-h-screen items-center justify-center bg-transparent px-4 pt-20 sm:px-6 lg:px-8">
@@ -217,57 +238,26 @@ const Hero = () => {
             className="relative flex items-center justify-center"
           >
             <div
-              className="absolute h-80 w-80 rounded-full bg-orange-500/10 blur-3xl hero-core-pulse"
+              className="hero-halo-drift absolute h-72 w-72 rounded-full bg-orange-500/12 blur-3xl"
               style={{ transform: `translate(${focusShiftX * 0.9}px, ${focusShiftY * 0.9}px)` }}
             />
             <div
-              className="absolute h-[25rem] w-[25rem] rounded-full border border-orange-400/10 hero-orbit-a"
+              className="absolute h-[23rem] w-[23rem] rounded-full border border-orange-400/16 hero-orbit-a"
               style={{ transform: `translate(${focusShiftX * 0.35}px, ${focusShiftY * 0.35}px)` }}
             />
             <div
-              className="absolute h-[27rem] w-[27rem] rounded-full border border-dashed border-orange-300/10 hero-orbit-b"
+              className="absolute h-[24.8rem] w-[24.8rem] rounded-full border border-dashed border-orange-300/16 hero-orbit-b"
               style={{ transform: `translate(${focusShiftX * 0.2}px, ${focusShiftY * 0.2}px)` }}
             />
             <div
-              className="absolute h-[19rem] w-[19rem] rounded-full border border-sky-400/10 hero-orbit-c"
+              className="absolute h-[17rem] w-[17rem] rounded-full border border-sky-400/14 hero-orbit-c"
               style={{ transform: `translate(${focusShiftX * 0.5}px, ${focusShiftY * 0.5}px)` }}
             />
 
             <motion.div
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 4.8, repeat: Infinity, ease: 'easeInOut' }}
-              className="hero-chip absolute left-0 top-16 hidden rounded-2xl border border-orange-400/20 bg-black/35 px-4 py-3 text-left backdrop-blur-md md:block"
-              style={{
-                animationDelay: '0.2s',
-                transform: `translate(${focusShiftX * -0.45}px, ${focusShiftY * -0.45}px)`,
-              }}
-            >
-              <div className="flex items-center gap-2 text-xs uppercase tracking-[0.22em] text-orange-300">
-                <FaCode />
-                Frontend
-              </div>
-              <p className="mt-2 text-sm font-semibold text-white">React UI Systems</p>
-            </motion.div>
-
-            <motion.div
-              animate={{ y: [0, 10, 0] }}
-              transition={{ duration: 5.2, repeat: Infinity, ease: 'easeInOut' }}
-              className="hero-chip-alt absolute bottom-10 right-0 hidden rounded-2xl border border-sky-400/20 bg-black/35 px-4 py-3 text-left backdrop-blur-md md:block"
-              style={{
-                animationDelay: '1s',
-                transform: `translate(${focusShiftX * 0.45}px, ${focusShiftY * 0.45}px)`,
-              }}
-            >
-              <div className="flex items-center gap-2 text-xs uppercase tracking-[0.22em] text-sky-300">
-                <FaSignal />
-                Backend
-              </div>
-              <p className="mt-2 text-sm font-semibold text-white">Laravel and API Logic</p>
-            </motion.div>
-
-            <motion.div
-              onMouseMove={handlePointerMove}
-              onMouseLeave={resetCard}
+              onPointerEnter={handlePointerEnter}
+              onPointerMove={handlePointerMove}
+              onPointerLeave={resetCard}
               onBlur={resetCard}
               style={{
                 transform: `perspective(1500px) rotateX(${cardState.rotateX}deg) rotateY(${cardState.rotateY}deg) scale(${cardState.scale})`,
@@ -280,9 +270,18 @@ const Hero = () => {
                 style={{ boxShadow: dynamicShadow, transformStyle: 'preserve-3d' }}
               >
                 <div
-                  className="pointer-events-none absolute inset-0 opacity-90 mix-blend-screen"
+                  className="hero-frame-spin pointer-events-none absolute inset-[-18%] rounded-full blur-3xl mix-blend-screen"
                   style={{
-                    background: `radial-gradient(circle at ${cardState.glareX}% ${cardState.glareY}%, rgba(255,255,255,0.46), transparent 22%), linear-gradient(135deg, rgba(249,115,22,0.24), transparent 44%, rgba(56,189,248,0.14) 72%, transparent)`,
+                    background:
+                      'conic-gradient(from 90deg, rgba(249,115,22,0.32), transparent 22%, rgba(56,189,248,0.12) 48%, transparent 68%, rgba(249,115,22,0.24) 88%, transparent)',
+                    opacity: isHovering ? 0.4 : 0.24,
+                  }}
+                />
+                <div
+                  className="pointer-events-none absolute inset-0 mix-blend-screen"
+                  style={{
+                    background: `radial-gradient(circle at ${cardState.glareX}% ${cardState.glareY}%, rgba(255,255,255,0.34), transparent 20%), linear-gradient(135deg, rgba(249,115,22,0.18), transparent 44%, rgba(56,189,248,0.1) 72%, transparent)`,
+                    opacity: isHovering ? 0.92 : 0.68,
                   }}
                 />
                 <div
@@ -314,8 +313,15 @@ const Hero = () => {
                       background: `radial-gradient(circle at ${cardState.glareX}% ${cardState.glareY}%, rgba(255, 191, 128, 0.28), transparent 16%), radial-gradient(circle at ${cardState.glareX}% ${cardState.glareY}%, rgba(56,189,248,0.16), transparent 28%)`,
                     }}
                   />
-                  <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-orange-300/15 to-transparent" />
+                  <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-orange-300/18 to-transparent" />
                   <div className="hero-scan absolute inset-0 bg-[linear-gradient(180deg,transparent_0%,rgba(255,255,255,0.04)_30%,rgba(249,115,22,0.16)_50%,rgba(255,255,255,0.03)_68%,transparent_100%)]" />
+                  <div
+                    className="hero-reticle-drift pointer-events-none absolute inset-0 opacity-50"
+                    style={{
+                      background:
+                        'radial-gradient(circle at 18% 16%, rgba(249,115,22,0.15), transparent 18%), radial-gradient(circle at 82% 22%, rgba(56,189,248,0.12), transparent 20%), linear-gradient(140deg, transparent 0 38%, rgba(249,115,22,0.08) 38.2% 38.6%, transparent 39% 100%), linear-gradient(38deg, transparent 0 64%, rgba(255,255,255,0.06) 64.2% 64.5%, transparent 65% 100%)',
+                    }}
+                  />
 
                   <img
                     src="/images/profile.jpg"
@@ -324,10 +330,11 @@ const Hero = () => {
                   />
 
                   <div
-                    className="hero-reticle pointer-events-none absolute z-20 h-20 w-20 rounded-full border border-orange-300/45"
+                    className="hero-reticle pointer-events-none absolute z-20 h-16 w-16 rounded-full border border-orange-300/55 transition-opacity duration-200"
                     style={{
                       left: `${cardState.glareX}%`,
                       top: `${cardState.glareY}%`,
+                      opacity: isHovering ? 1 : 0.42,
                     }}
                   >
                     <div className="hero-reticle-orbit absolute inset-2 rounded-full border border-dashed border-sky-300/35" />
@@ -337,32 +344,17 @@ const Hero = () => {
                   </div>
 
                   <div
-                    className="pointer-events-none absolute right-5 top-[35%] rounded-xl border border-sky-300/15 bg-black/35 px-3 py-2 backdrop-blur-sm"
+                    className="pointer-events-none absolute right-5 top-5 rounded-xl border border-sky-300/15 bg-black/35 px-3 py-2 backdrop-blur-sm"
                     style={{ transform: `translate(${focusShiftX * 0.55}px, ${focusShiftY * 0.45}px)` }}
                   >
-                    <p className="text-[10px] uppercase tracking-[0.24em] text-slate-400">Latency</p>
-                    <p className="mt-1 text-sm font-semibold text-white">12 ms</p>
-                  </div>
-
-                  <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full border border-orange-400/25 bg-black/35 px-3 py-1.5 backdrop-blur-sm">
-                    <span className="h-2 w-2 rounded-full bg-orange-400 hero-core-pulse" />
-                    <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-orange-200">
-                      System Online
-                    </span>
-                  </div>
-
-                  <div
-                    className="absolute right-4 top-4 rounded-2xl border border-white/10 bg-black/35 px-3 py-2 backdrop-blur-sm"
-                    style={{ transform: `translate(${focusShiftX * 0.35}px, ${focusShiftY * -0.2}px)` }}
-                  >
-                    <p className="text-[10px] uppercase tracking-[0.24em] text-slate-400">Focus</p>
-                    <p className="mt-1 text-sm font-semibold text-white">UI + Backend</p>
+                    <p className="text-[10px] uppercase tracking-[0.24em] text-slate-400">Availability</p>
+                    <p className="mt-1 text-sm font-semibold text-white">Open to Work</p>
                   </div>
 
                   <div className="absolute bottom-4 left-4 right-4 rounded-2xl border border-white/10 bg-black/30 p-3 backdrop-blur-md">
-                    <div className="mb-2 flex items-center justify-between text-[10px] uppercase tracking-[0.24em] text-slate-400">
-                      <span>Signal</span>
-                      <span className="hero-data-blink">99%</span>
+                    <div className="mb-2 flex items-center gap-2 text-[10px] uppercase tracking-[0.24em] text-slate-400">
+                      <span>Profile Signal</span>
+                      <span className="hero-data-blink h-1.5 w-1.5 rounded-full bg-orange-300" />
                     </div>
                     <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
                       <motion.div
@@ -378,7 +370,7 @@ const Hero = () => {
                   className="mt-3 rounded-[1.4rem] border border-white/10 bg-black/25 p-4 backdrop-blur-sm"
                   style={{ transform: 'translateZ(36px)' }}
                 >
-                  <div className="flex items-center justify-between gap-4">
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-center gap-3">
                       <div className="relative">
                         <img
@@ -391,34 +383,32 @@ const Hero = () => {
                         </span>
                       </div>
                       <div>
-                        <div className="flex items-center gap-2 text-sm font-semibold text-white">
+                        <p className="text-sm font-semibold text-white">John Lloyd Galito</p>
+                        <div className="mt-1 flex items-center gap-2 text-xs text-slate-300">
                           <FaGithub className="text-orange-400" />
                           @Kuyalloyd
                         </div>
-                        <p className="text-xs text-slate-300">Available for Work</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 rounded-full border border-orange-400/20 bg-orange-500/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-orange-200">
-                      <FaBolt />
-                      Active
+                    <div className="rounded-full border border-orange-400/20 bg-orange-500/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-orange-200">
+                      Open to Work
                     </div>
                   </div>
 
-                  <div className="mt-4 flex items-center justify-between gap-3">
-                    <div className="grid grid-cols-3 gap-2 text-[10px] uppercase tracking-[0.2em] text-slate-400">
+                  <div className="mt-4 flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-slate-400">
+                    <div className="grid grid-cols-3 gap-2">
                       <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5">React</span>
                       <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5">Laravel</span>
                       <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5">API</span>
                     </div>
-                    <div className="flex items-center gap-2 rounded-full border border-sky-300/20 bg-sky-300/10 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.24em] text-sky-200">
-                      <FaMicrochip />
-                      Mode Sync
-                    </div>
+                    <span className="rounded-full border border-sky-300/15 bg-sky-400/5 px-3 py-1.5 text-slate-300">
+                      Butuan City, PH
+                    </span>
                   </div>
 
-                  <div className="mt-4 flex items-center justify-between gap-3">
-                    <div className="text-[10px] uppercase tracking-[0.24em] text-slate-500">
-                      Futuristic profile interface
+                  <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="text-sm text-slate-300">
+                      Building clean, modern web products with strong UI and backend structure.
                     </div>
                     <motion.a
                       href="#contact"

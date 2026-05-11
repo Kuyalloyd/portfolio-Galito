@@ -93,6 +93,21 @@ const networkStyles = `
     50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.7; }
   }
 
+  @keyframes techCursorCore {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.65; }
+    50% { transform: translate(-50%, -50%) scale(1.24); opacity: 1; }
+  }
+
+  @keyframes techTraceShift {
+    0% { background-position: 0 0, 0 0, 0 0; }
+    100% { background-position: 180px 0, -160px 90px, 70px -70px; }
+  }
+
+  @keyframes techHudSweep {
+    0%, 100% { transform: translate3d(0, 0, 0); opacity: 0.16; }
+    50% { transform: translate3d(18px, -10px, 0); opacity: 0.3; }
+  }
+
   .tech-pan {
     animation: techPan 30s ease-in-out infinite;
     transform-origin: center;
@@ -168,6 +183,20 @@ const networkStyles = `
     left: var(--mouse-x);
     top: var(--mouse-y);
     animation: techCursorPulse 4.2s ease-in-out infinite;
+  }
+
+  .tech-cursor-core {
+    left: var(--mouse-x);
+    top: var(--mouse-y);
+    animation: techCursorCore 2.8s ease-in-out infinite;
+  }
+
+  .tech-circuit {
+    animation: techTraceShift 32s linear infinite;
+  }
+
+  .tech-hud-sweep {
+    animation: techHudSweep 10s ease-in-out infinite;
   }
 `;
 
@@ -276,6 +305,24 @@ const ParticleBackground = () => {
       />
 
       <div
+        className="tech-circuit tech-parallax-md absolute inset-0 opacity-30"
+        style={{
+          backgroundImage:
+            'repeating-linear-gradient(90deg, transparent 0 38px, rgba(249,115,22,0.08) 38px 39px, transparent 39px 120px), repeating-linear-gradient(0deg, transparent 0 52px, rgba(255,183,119,0.06) 52px 53px, transparent 53px 136px), linear-gradient(125deg, transparent 0 42%, rgba(249,115,22,0.07) 42.2% 42.5%, transparent 42.8% 100%)',
+          maskImage: 'radial-gradient(circle at center, black 28%, transparent 100%)',
+          WebkitMaskImage: 'radial-gradient(circle at center, black 28%, transparent 100%)',
+        }}
+      />
+
+      <div
+        className="tech-hud-sweep tech-parallax-sm absolute inset-0 opacity-24 mix-blend-screen"
+        style={{
+          background:
+            'linear-gradient(110deg, transparent 0 20%, rgba(249,115,22,0.08) 20.3% 20.6%, transparent 21% 100%), linear-gradient(35deg, transparent 0 72%, rgba(56,189,248,0.05) 72.2% 72.4%, transparent 72.8% 100%)',
+        }}
+      />
+
+      <div
         className="tech-parallax-md absolute inset-0 opacity-25"
         style={{
           backgroundImage: 'radial-gradient(rgba(255, 170, 90, 0.22) 1px, transparent 1px)',
@@ -287,10 +334,13 @@ const ParticleBackground = () => {
 
       <div className="tech-cursor-ring tech-parallax-lg absolute h-56 w-56 rounded-full border border-orange-300/25 bg-orange-300/5 blur-[1px]" />
       <div className="tech-cursor-ring tech-parallax-md absolute h-28 w-28 rounded-full border border-sky-300/20" style={{ animationDelay: '1.6s' }} />
+      <div className="tech-cursor-core tech-parallax-lg absolute h-3 w-3 rounded-full bg-orange-200 shadow-[0_0_20px_rgba(255,191,128,0.95)]" />
+      <div className="tech-cursor-core tech-parallax-md absolute h-14 w-14 rounded-full border border-orange-200/18" style={{ animationDelay: '0.8s' }} />
 
       <div className="tech-parallax-md absolute inset-0">
         <div className="tech-beam-a absolute left-[14%] top-[-12%] h-[124%] w-px bg-gradient-to-b from-transparent via-orange-400/30 to-transparent blur-[1px]" />
         <div className="tech-beam-b absolute right-[17%] top-[-8%] h-[118%] w-px bg-gradient-to-b from-transparent via-sky-400/18 to-transparent blur-[1px]" />
+        <div className="tech-beam-a absolute left-[-10%] top-[24%] h-px w-[125%] bg-gradient-to-r from-transparent via-orange-400/18 to-transparent blur-[1px]" />
         <div className="tech-scan absolute inset-0 bg-[linear-gradient(180deg,transparent_0%,rgba(249,115,22,0.04)_35%,rgba(255,191,128,0.18)_50%,rgba(249,115,22,0.04)_65%,transparent_100%)]" />
       </div>
 
@@ -299,6 +349,15 @@ const ParticleBackground = () => {
         <div className="absolute left-[55.4%] top-[15.4%] h-[12.2rem] w-[12.2rem] rounded-full border border-dashed border-orange-300/10 tech-ring-b" />
         <div className="absolute right-[10%] bottom-[12%] h-32 w-32 rounded-full border border-sky-400/10 tech-ring-b" />
         <div className="absolute right-[9.4%] bottom-[11.4%] h-[8.7rem] w-[8.7rem] rounded-full border border-dashed border-orange-400/10 tech-ring-a" />
+        <div className="absolute left-[8%] top-[12%] h-20 w-20 rounded-full border border-orange-300/10 tech-ring-b" />
+        <div className="absolute left-[7.5%] top-[11.5%] h-[5.9rem] w-[5.9rem] rounded-full border border-dashed border-sky-300/10 tech-ring-a" />
+      </div>
+
+      <div className="tech-parallax-sm absolute inset-6 opacity-40">
+        <div className="absolute left-0 top-0 h-10 w-24 border-l border-t border-orange-300/20" />
+        <div className="absolute right-0 top-0 h-10 w-24 border-r border-t border-orange-300/16" />
+        <div className="absolute bottom-0 left-0 h-10 w-24 border-b border-l border-sky-300/12" />
+        <div className="absolute bottom-0 right-0 h-10 w-24 border-b border-r border-orange-300/16" />
       </div>
 
       <div className="tech-parallax-md absolute inset-0">
@@ -373,6 +432,26 @@ const ParticleBackground = () => {
               <line x1="51" y1="73" x2="61" y2="70" />
               <line x1="57" y1="64" x2="61" y2="70" />
             </g>
+
+            <g className="tech-cluster tech-float-b">
+              <line x1="9" y1="18" x2="16" y2="24" />
+              <line x1="16" y1="24" x2="14" y2="34" />
+              <line x1="9" y1="18" x2="14" y2="34" />
+              <line x1="16" y1="24" x2="25" y2="22" />
+              <line x1="25" y1="22" x2="29" y2="30" />
+              <line x1="14" y1="34" x2="29" y2="30" />
+              <line x1="25" y1="22" x2="34" y2="15" />
+            </g>
+
+            <g className="tech-cluster tech-float-c">
+              <line x1="72" y1="72" x2="79" y2="66" />
+              <line x1="79" y1="66" x2="87" y2="72" />
+              <line x1="72" y1="72" x2="87" y2="72" />
+              <line x1="79" y1="66" x2="83" y2="58" />
+              <line x1="83" y1="58" x2="91" y2="62" />
+              <line x1="87" y1="72" x2="94" y2="68" />
+              <line x1="83" y1="58" x2="94" y2="68" />
+            </g>
           </g>
 
           <g filter="url(#soft-glow)">
@@ -381,6 +460,8 @@ const ParticleBackground = () => {
               [38, 12], [46, 19], [43, 29], [55, 16], [61, 24], [56, 31],
               [57, 26], [67, 35], [75, 32], [71, 45], [82, 43], [89, 56], [94, 51], [97, 35],
               [34, 74], [43, 67], [51, 73], [47, 59], [57, 64], [61, 70],
+              [9, 18], [16, 24], [14, 34], [25, 22], [29, 30], [34, 15],
+              [72, 72], [79, 66], [87, 72], [83, 58], [91, 62], [94, 68],
             ].map(([x, y], index) => (
               <circle
                 key={`${x}-${y}-${index}`}
@@ -409,6 +490,12 @@ const ParticleBackground = () => {
             </g>
             <g className="tech-hub" style={{ animationDelay: '2.2s' }}>
               <circle cx="94" cy="51" r="0.94" fill={hubColor} />
+            </g>
+            <g className="tech-hub" style={{ animationDelay: '2.7s' }}>
+              <circle cx="25" cy="22" r="0.92" fill={hubColor} />
+            </g>
+            <g className="tech-hub" style={{ animationDelay: '3.1s' }}>
+              <circle cx="83" cy="58" r="1.02" fill={hubColor} />
             </g>
           </g>
         </svg>
